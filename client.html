@@ -7,11 +7,17 @@
 
     <body>
 	my: <audio controls muted="true" id="myaudio"></audio><br/>
-	his: <audio controls id="hisaudio"></audio><br/>
-        <button id="endCall">End Call</button>
-
+	his: <audio controls id="hisaudio"></audio>
+        <button id="endCall">End Call</button><br/><br/>
+        <input type="text" id="forwardNumber" placeholder="forward number"><br/>
+        <button onclick="holdAndCall()">hold and call</button><br/>
+        <button onclick="forward()">forward</button><br/><br/>
+    forwarded session:<br/>
+	my: <audio controls muted="true" id="myaudio1"></audio><br/>
+	his: <audio controls id="hisaudio1"></audio>
         <script>
 var session;
+var holdedSession;
 
 var endButton = document.getElementById('endCall');
 endButton.addEventListener("click", function () {
@@ -51,7 +57,8 @@ var config = {
 
 var ua = new SIP.UA(config);
 
-ua.on('invite', function (session) {
+ua.on('invite', function (newSession) {
+    session = newSession;
     console.log('!got invite')
     session.accept({
         media: {
@@ -59,14 +66,38 @@ ua.on('invite', function (session) {
                 audio: true,
                 video: false
             },
-	    render: {
-	        remote: document.getElementById('hisaudio'),
-	        local: document.getElementById('myaudio')
-	    }
+            render: {
+                remote: document.getElementById('hisaudio'),
+                local: document.getElementById('myaudio')
+            }
         }
     });
 });
 
+
+function holdAndCall() {
+    var forwardNumber = document.getElementById('forwardNumber').value;
+    holdedSession = session;
+    holdedSession.hold()
+    session = ua.invite(forwardNumber, {
+        media: {
+            constraints: {
+                audio: true,
+                video: false
+            },
+            render: {
+                remote: document.getElementById('hisaudio1'),
+                local: document.getElementById('myaudio1')
+            }
+        }
+    })
+    
+}
+
+
+function forward(name) {
+    session.refer(holded_session)
+}
 
 
         </script>
