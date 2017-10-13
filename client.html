@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>sipjs client</title>
+    </head>
+        <script src="sip-0.7.8.js?"></script>
+
+    <body>
+	my: <audio controls muted="true" id="myaudio"></audio><br/>
+	his: <audio controls id="hisaudio"></audio><br/>
+        <button id="endCall">End Call</button>
+
+        <script>
+var session;
+
+var endButton = document.getElementById('endCall');
+endButton.addEventListener("click", function () {
+    session.bye();
+    alert("Call Ended");
+}, false);
+
+var config = {
+  log: {
+    level: "debug"
+  },
+
+//  stunServers: "stun:127.0.0.1",
+
+  // Replace this IP address with your Asterisk IP address
+  uri: '1570@77.244.209.212:5160',
+
+  // Replace this IP address with your Asterisk IP address,
+  // and replace the port with your Asterisk port from the http.conf file
+  ws_servers: 'wss://fs.qantor.ru:7443',
+
+  // Replace this with the username from your sip.conf file
+  authorizationUser: '1570',
+
+  // Replace this with the password from your sip.conf file
+  password: 'Y75KhpHRMq9hXkBDlRxt09SBbeXjtxVz',
+
+  // HackIpInContact for Asterisk
+  hackIpInContact: true,
+
+  // rtcpMuxPolicy for Asterisk
+  rtcpMuxPolicy: 'negotiate',
+
+  hackWssInTransport: true
+
+};
+
+var ua = new SIP.UA(config);
+
+ua.on('invite', function (session) {
+    console.log('!got invite')
+    session.accept({
+        media: {
+            constraints: {
+                audio: true,
+                video: false
+            },
+	    render: {
+	        remote: document.getElementById('hisaudio'),
+	        local: document.getElementById('myaudio')
+	    }
+        }
+    });
+});
+
+
+
+        </script>
+    </body>
+</html>
+
