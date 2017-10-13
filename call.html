@@ -8,8 +8,9 @@
     <body>
 	my: <audio controls muted="true" id="myaudio"></audio><br/>
 	his: <audio controls id="hisaudio"></audio><br/>
-        <button id="endCall">End Call</button>
-
+        <input type="text" id="number" placeholder="invite number"><br/>
+        <button onclick="invite()">Invite</button>
+        <button id="endCall">End Call</button><br/>
         <script>
 var session;
 
@@ -51,19 +52,25 @@ var config = {
 
 var ua = new SIP.UA(config);
 
-// Invite with audio only
-session = ua.invite('1570',{
-  media: {
-    constraints: {
-      audio: true,
-      video: false
-    },
-    render: {
-      remote: document.getElementById('hisaudio'),
-      local: document.getElementById('myaudio')
+
+
+function invite() {
+  var number = document.getElementById('number').value;
+  console.log('invite', number);
+  // Invite with audio only
+  session = ua.invite(number,{
+    media: {
+      constraints: {
+        audio: true,
+        video: false
+      },
+      render: {
+        remote: document.getElementById('hisaudio'),
+        local: document.getElementById('myaudio')
+      }
     }
-  }
-});
+  });
+}
         </script>
     </body>
 </html>
